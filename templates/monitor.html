@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+
+<html lang="zh-Hant">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Cisco Monitor
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="/static/style.css"
+    >
+
+</head>
+
+
+<body>
+
+<div class="container">
+
+
+    <!-- ====================================================
+         Back
+         ==================================================== -->
+
+    <a
+        class="back-link"
+        href="/"
+    >
+        ← 回首頁
+    </a>
+
+
+
+    <!-- ====================================================
+         Switch Header
+         ==================================================== -->
+
+    <div class="monitor-header">
+
+        <div>
+
+            <p class="small-title">
+                SWITCH MONITOR
+            </p>
+
+            <h1 id="hostname">
+                Loading...
+            </h1>
+
+            <p>
+                Cisco Catalyst 3750G
+            </p>
+
+        </div>
+
+
+        <div
+            id="status"
+            class="status-badge"
+        >
+            CHECKING
+        </div>
+
+    </div>
+
+
+
+    <!-- ====================================================
+         Switch Metrics
+         ==================================================== -->
+
+    <div class="metrics">
+
+
+        <div class="metric-card">
+
+            <span>
+                Management IP
+            </span>
+
+            <strong id="ip">
+                -
+            </strong>
+
+        </div>
+
+
+        <div class="metric-card">
+
+            <span>
+                CPU
+            </span>
+
+            <strong>
+
+                <span id="cpu">
+                    -
+                </span>
+
+                %
+
+            </strong>
+
+        </div>
+
+
+        <div class="metric-card">
+
+            <span>
+                Uptime
+            </span>
+
+            <strong id="uptime">
+                -
+            </strong>
+
+        </div>
+
+
+        <div class="metric-card">
+
+            <span>
+                Last Update
+            </span>
+
+            <strong id="last-update">
+                -
+            </strong>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- ====================================================
+         Traffic History
+         ==================================================== -->
+
+    <div class="chart-card">
+
+
+        <div class="chart-header">
+
+
+            <div>
+
+                <p class="small-title">
+                    TRAFFIC HISTORY
+                </p>
+
+                <h2 id="chart-interface">
+
+                    點擊下方 Interface
+
+                </h2>
+
+            </div>
+
+
+            <div class="range-buttons">
+
+                <button
+                    onclick="changeRange(3600)"
+                >
+                    1H
+                </button>
+
+                <button
+                    onclick="changeRange(21600)"
+                >
+                    6H
+                </button>
+
+                <button
+                    onclick="changeRange(86400)"
+                >
+                    24H
+                </button>
+
+                <button
+                    onclick="changeRange(604800)"
+                >
+                    7D
+                </button>
+
+            </div>
+
+
+        </div>
+
+
+
+        <div class="chart-legend">
+
+            <span class="legend-rx">
+                ● RX
+            </span>
+
+            <span class="legend-tx">
+                ● TX
+            </span>
+
+        </div>
+
+
+
+        <canvas
+            id="traffic-chart"
+        ></canvas>
+
+
+        <div
+            id="chart-message"
+            class="chart-message"
+        >
+            點擊 Interface 查看歷史流量
+        </div>
+
+
+    </div>
+
+
+
+    <!-- ====================================================
+         Interface
+         ==================================================== -->
+
+    <div class="section-header">
+
+        <div>
+
+            <h2>
+                Interfaces
+            </h2>
+
+            <p>
+                即時 Interface Status / Traffic
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="interface-card">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Interface
+                    </th>
+
+                    <th>
+                        Admin
+                    </th>
+
+                    <th>
+                        Link
+                    </th>
+
+                    <th>
+                        State
+                    </th>
+
+                    <th>
+                        RX Mbps
+                    </th>
+
+                    <th>
+                        TX Mbps
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="interface-table">
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+</div>
+
+
+
+<script>
+
+
+// ============================================================
+// 目前選擇的 Interface
+// ============================================================
+
+let selectedInterfaceIndex = null;
+
+let selectedInterfaceName = null;
+
+
+// 預設圖表看最近 1 小時
+let selectedRange = 3600;
+
+
+// ============================================================
+// Monitor Update
+// ============================================================
+
+async function updateMonitor() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/monitor"
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Monitor API failed"
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        const sw =
+            data.switch;
+
+
+        // ----------------------------------------------------
+        // Switch 基本資料
+        // ----------------------------------------------------
+
+        document
+            .getElementById(
+                "hostname"
+            )
+            .textContent =
+                sw.hostname
+                ?? "Unknown";
+
+
+        document
+            .getElementById(
+                "ip"
+            )
+            .textContent =
+                sw.ip
+                ?? "-";
+
+
+        document
+            .getElementById(
+                "cpu"
+            )
+            .textContent =
+                sw.cpu
+                ?? "-";
+
+
+        document
+            .getElementById(
+                "uptime"
+            )
+            .textContent =
+                sw.uptime
+                ?? "-";
+
+
+        // ----------------------------------------------------
+        // Last Update
+        // ----------------------------------------------------
+
+        if (data.last_update) {
+
+            document
+                .getElementById(
+                    "last-update"
+                )
+                .textContent =
+                    new Date(
+                        data.last_update
+                        * 1000
+                    )
+                    .toLocaleTimeString();
+
+        }
+
+
+        // ----------------------------------------------------
+        // Switch Status
+        // ----------------------------------------------------
+
+        const switchStatus =
+            document
+            .getElementById(
+                "status"
+            );
+
+
+        if (sw.online) {
+
+            switchStatus.textContent =
+                "ONLINE";
+
+            switchStatus.className =
+                "status-badge online-badge";
+
+        }
+
+        else {
+
+            switchStatus.textContent =
+                "OFFLINE";
+
+            switchStatus.className =
+                "status-badge offline-badge";
+
+        }
+
+
+        // ----------------------------------------------------
+        // Interface Table
+        // ----------------------------------------------------
+
+        const table =
+            document
+            .getElementById(
+                "interface-table"
+            );
+
+
+        table.innerHTML =
+            "";
+
+
+        data.interfaces.forEach(
+            function(interface) {
+
+
+                const row =
+                    document.createElement(
+                        "tr"
+                    );
+
+
+                row.className =
+                    "clickable-row";
+
+
+                // 點擊 Port
+                row.onclick =
+                    function() {
+
+                        selectedInterfaceIndex =
+                            interface.index;
+
+
+                        selectedInterfaceName =
+                            interface.name;
+
+
+                        loadHistory();
+
+                    };
+
+
+                // Interface
+                addCell(
+                    row,
+                    interface.name
+                );
+
+
+                // Admin
+                const adminCell =
+                    addCell(
+                        row,
+                        interface.admin_status
+                    );
+
+
+                if (
+                    interface.admin_status
+                    === "UP"
+                ) {
+
+                    adminCell.className =
+                        "interface-up";
+
+                }
+
+                else {
+
+                    adminCell.className =
+                        "interface-down";
+
+                }
+
+
+                // Link
+                const linkCell =
+                    addCell(
+                        row,
+                        interface.oper_status
+                    );
+
+
+                if (
+                    interface.oper_status
+                    === "UP"
+                ) {
+
+                    linkCell.className =
+                        "interface-up";
+
+                }
+
+                else {
+
+                    linkCell.className =
+                        "interface-down";
+
+                }
+
+
+                // State
+                const stateCell =
+                    addCell(
+                        row,
+                        interface.state
+                    );
+
+
+                if (
+                    interface.state
+                    === "ONLINE"
+                ) {
+
+                    stateCell.className =
+                        "interface-up";
+
+                }
+
+                else if (
+                    interface.state
+                    === "SHUTDOWN"
+                ) {
+
+                    stateCell.className =
+                        "interface-shutdown";
+
+                }
+
+                else {
+
+                    stateCell.className =
+                        "interface-nolink";
+
+                }
+
+
+                // RX
+                addCell(
+                    row,
+                    Number(
+                        interface.rx_mbps
+                    ).toFixed(3)
+                );
+
+
+                // TX
+                addCell(
+                    row,
+                    Number(
+                        interface.tx_mbps
+                    ).toFixed(3)
+                );
+
+
+                table.appendChild(
+                    row
+                );
+
+            }
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Monitor Error:",
+            error
+        );
+
+    }
+
+}
+
+
+// ============================================================
+// Add Cell
+// ============================================================
+
+function addCell(
+    row,
+    value
+) {
+
+    const cell =
+        document.createElement(
+            "td"
+        );
+
+
+    cell.textContent =
+        value;
+
+
+    row.appendChild(
+        cell
+    );
+
+
+    return cell;
+}
+
+
+// ============================================================
+// Change History Range
+// ============================================================
+
+function changeRange(
+    seconds
+) {
+
+    selectedRange =
+        seconds;
+
+
+    if (
+        selectedInterfaceIndex
+        !== null
+    ) {
+
+        loadHistory();
+
+    }
+
+}
+
+
+// ============================================================
+// Load History
+// ============================================================
+
+async function loadHistory() {
+
+    if (
+        selectedInterfaceIndex
+        === null
+    ) {
+
+        return;
+
+    }
+
+
+    try {
+
+        document
+            .getElementById(
+                "chart-interface"
+            )
+            .textContent =
+                selectedInterfaceName;
+
+
+        const response =
+            await fetch(
+                "/api/history/"
+                +
+                selectedInterfaceIndex
+                +
+                "?seconds="
+                +
+                selectedRange
+            );
+
+
+        const data =
+            await response.json();
+
+
+        drawTrafficChart(
+            data.history
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "History Error:",
+            error
+        );
+
+    }
+
+}
+
+
+// ============================================================
+// Draw Traffic Chart
+// ============================================================
+
+function drawTrafficChart(
+    history
+) {
+
+    const canvas =
+        document.getElementById(
+            "traffic-chart"
+        );
+
+
+    const container =
+        canvas.parentElement;
+
+
+    // Retina / 高解析度畫布
+    const pixelRatio =
+        window.devicePixelRatio
+        || 1;
+
+
+    const width =
+        container.clientWidth
+        - 40;
+
+
+    const height =
+        320;
+
+
+    canvas.width =
+        width
+        * pixelRatio;
+
+
+    canvas.height =
+        height
+        * pixelRatio;
+
+
+    canvas.style.width =
+        width
+        + "px";
+
+
+    canvas.style.height =
+        height
+        + "px";
+
+
+    const ctx =
+        canvas.getContext(
+            "2d"
+        );
+
+
+    ctx.scale(
+        pixelRatio,
+        pixelRatio
+    );
+
+
+    ctx.clearRect(
+        0,
+        0,
+        width,
+        height
+    );
+
+
+    const message =
+        document.getElementById(
+            "chart-message"
+        );
+
+
+    if (
+        history.length
+        < 2
+    ) {
+
+        message.style.display =
+            "block";
+
+
+        message.textContent =
+            "目前歷史資料不足，稍等一下再看看。";
+
+
+        return;
+
+    }
+
+
+    message.style.display =
+        "none";
+
+
+    // --------------------------------------------------------
+    // Chart 尺寸
+    // --------------------------------------------------------
+
+    const paddingLeft =
+        60;
+
+
+    const paddingRight =
+        20;
+
+
+    const paddingTop =
+        25;
+
+
+    const paddingBottom =
+        45;
+
+
+    const chartWidth =
+        width
+        -
+        paddingLeft
+        -
+        paddingRight;
+
+
+    const chartHeight =
+        height
+        -
+        paddingTop
+        -
+        paddingBottom;
+
+
+    // --------------------------------------------------------
+    // 最大 Mbps
+    // --------------------------------------------------------
+
+    let maxValue =
+        0;
+
+
+    history.forEach(
+        function(point) {
+
+            maxValue =
+                Math.max(
+                    maxValue,
+                    point.rx_mbps,
+                    point.tx_mbps
+                );
+
+        }
+    );
+
+
+    // 最低 Y Scale = 1 Mbps
+    if (maxValue < 1) {
+
+        maxValue = 1;
+
+    }
+
+
+    // 留 10% 上方空間
+    maxValue =
+        maxValue
+        * 1.1;
+
+
+    // --------------------------------------------------------
+    // 背景 Grid
+    // --------------------------------------------------------
+
+    ctx.strokeStyle =
+        "#334155";
+
+
+    ctx.lineWidth =
+        1;
+
+
+    ctx.fillStyle =
+        "#94a3b8";
+
+
+    ctx.font =
+        "12px Arial";
+
+
+    const gridLines =
+        5;
+
+
+    for (
+        let i = 0;
+        i <= gridLines;
+        i++
+    ) {
+
+        const y =
+            paddingTop
+            +
+            (
+                chartHeight
+                /
+                gridLines
+            )
+            *
+            i;
+
+
+        ctx.beginPath();
+
+
+        ctx.moveTo(
+            paddingLeft,
+            y
+        );
+
+
+        ctx.lineTo(
+            width
+            -
+            paddingRight,
+            y
+        );
+
+
+        ctx.stroke();
+
+
+        const value =
+            maxValue
+            -
+            (
+                maxValue
+                /
+                gridLines
+            )
+            *
+            i;
+
+
+        ctx.fillText(
+            value.toFixed(2)
+            + " Mbps",
+
+            5,
+
+            y + 4
+        );
+
+    }
+
+
+    // --------------------------------------------------------
+    // X Axis 時間
+    // --------------------------------------------------------
+
+    const timeLabels =
+        5;
+
+
+    for (
+        let i = 0;
+        i < timeLabels;
+        i++
+    ) {
+
+        const historyIndex =
+            Math.floor(
+                (
+                    history.length
+                    - 1
+                )
+                *
+                i
+                /
+                (
+                    timeLabels
+                    - 1
+                )
+            );
+
+
+        const point =
+            history[
+                historyIndex
+            ];
+
+
+        const x =
+            paddingLeft
+            +
+            (
+                chartWidth
+                *
+                i
+                /
+                (
+                    timeLabels
+                    - 1
+                )
+            );
+
+
+        const time =
+            new Date(
+                point.timestamp
+                * 1000
+            )
+            .toLocaleTimeString(
+                [],
+                {
+                    hour:
+                        "2-digit",
+
+                    minute:
+                        "2-digit"
+                }
+            );
+
+
+        ctx.fillText(
+            time,
+
+            x - 18,
+
+            height - 15
+        );
+
+    }
+
+
+    // --------------------------------------------------------
+    // RX
+    // --------------------------------------------------------
+
+    drawLine(
+        ctx,
+
+        history,
+
+        "rx_mbps",
+
+        maxValue,
+
+        chartWidth,
+
+        chartHeight,
+
+        paddingLeft,
+
+        paddingTop,
+
+        "#22c55e"
+    );
+
+
+    // --------------------------------------------------------
+    // TX
+    // --------------------------------------------------------
+
+    drawLine(
+        ctx,
+
+        history,
+
+        "tx_mbps",
+
+        maxValue,
+
+        chartWidth,
+
+        chartHeight,
+
+        paddingLeft,
+
+        paddingTop,
+
+        "#38bdf8"
+    );
+
+}
+
+
+// ============================================================
+// Draw Line
+// ============================================================
+
+function drawLine(
+    ctx,
+    history,
+    key,
+    maxValue,
+    chartWidth,
+    chartHeight,
+    paddingLeft,
+    paddingTop,
+    color
+) {
+
+    ctx.beginPath();
+
+
+    ctx.strokeStyle =
+        color;
+
+
+    ctx.lineWidth =
+        2;
+
+
+    history.forEach(
+        function(
+            point,
+            index
+        ) {
+
+            const x =
+                paddingLeft
+                +
+                (
+                    index
+                    /
+                    (
+                        history.length
+                        - 1
+                    )
+                )
+                *
+                chartWidth;
+
+
+            const y =
+                paddingTop
+                +
+                chartHeight
+                -
+                (
+                    point[key]
+                    /
+                    maxValue
+                )
+                *
+                chartHeight;
+
+
+            if (index === 0) {
+
+                ctx.moveTo(
+                    x,
+                    y
+                );
+
+            }
+
+            else {
+
+                ctx.lineTo(
+                    x,
+                    y
+                );
+
+            }
+
+        }
+    );
+
+
+    ctx.stroke();
+
+}
+
+
+// ============================================================
+// Start
+// ============================================================
+
+updateMonitor();
+
+
+// Monitor 每 5 秒刷新
+setInterval(
+    updateMonitor,
+    5000
+);
+
+
+// 如果已經選 Port
+// 每 30 秒更新歷史圖
+setInterval(
+    function() {
+
+        if (
+            selectedInterfaceIndex
+            !== null
+        ) {
+
+            loadHistory();
+
+        }
+
+    },
+
+    30000
+);
+
+
+</script>
+
+
+</body>
+
+</html>
