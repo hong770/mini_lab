@@ -12,12 +12,19 @@
     >
 
     <title>
-        Cisco Monitor
+        Cisco Network Monitor
     </title>
+
+
+    <!--
+        Monitor 使用獨立 CSS。
+
+        不碰首頁原本的 style.css。
+    -->
 
     <link
         rel="stylesheet"
-        href="/static/style.css"
+        href="/static/monitor.css"
     >
 
 </head>
@@ -29,15 +36,20 @@
 
 
     <!-- ====================================================
-         Back
+         Navigation
          ==================================================== -->
 
-    <a
-        class="back-link"
-        href="/"
-    >
-        ← 回首頁
-    </a>
+    <div class="top-nav">
+
+        <a href="/">
+            ← Home
+        </a>
+
+        <span>
+            Cisco Network Monitor
+        </span>
+
+    </div>
 
 
 
@@ -45,33 +57,33 @@
          Switch Header
          ==================================================== -->
 
-    <div class="monitor-header">
+    <section class="switch-header">
 
         <div>
 
-            <p class="small-title">
-                SWITCH MONITOR
-            </p>
+            <div class="eyebrow">
+                SWITCH
+            </div>
 
             <h1 id="hostname">
                 Loading...
             </h1>
 
-            <p>
-                Cisco Catalyst 3750G
-            </p>
+            <div id="switch-model">
+                Cisco Catalyst
+            </div>
 
         </div>
 
 
         <div
-            id="status"
-            class="status-badge"
+            id="switch-status"
+            class="status-badge status-checking"
         >
             CHECKING
         </div>
 
-    </div>
+    </section>
 
 
 
@@ -79,8 +91,7 @@
          Switch Metrics
          ==================================================== -->
 
-    <div class="metrics">
-
+    <section class="metrics-grid">
 
         <div class="metric-card">
 
@@ -88,7 +99,7 @@
                 Management IP
             </span>
 
-            <strong id="ip">
+            <strong id="switch-ip">
                 -
             </strong>
 
@@ -103,7 +114,7 @@
 
             <strong>
 
-                <span id="cpu">
+                <span id="switch-cpu">
                     -
                 </span>
 
@@ -120,7 +131,7 @@
                 Uptime
             </span>
 
-            <strong id="uptime">
+            <strong id="switch-uptime">
                 -
             </strong>
 
@@ -139,8 +150,114 @@
 
         </div>
 
+    </section>
 
+
+
+    <!-- ====================================================
+         Backend Error
+         ==================================================== -->
+
+    <div
+        id="backend-error"
+        class="backend-error hidden"
+    >
     </div>
+
+
+
+    <!-- ====================================================
+         Active Alerts
+         ==================================================== -->
+
+    <section class="panel">
+
+        <div class="panel-header">
+
+            <div>
+
+                <div class="eyebrow">
+                    ACTIVE ALERTS
+                </div>
+
+                <h2>
+                    Current Problems
+                </h2>
+
+            </div>
+
+
+            <div class="count-badge">
+
+                Active:
+
+                <strong id="alert-count">
+                    0
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div
+            id="alerts-list"
+            class="alerts-grid"
+        >
+
+            <div class="empty-state">
+                No active alerts
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ====================================================
+         Recent Events
+         ==================================================== -->
+
+    <section class="panel">
+
+        <div class="panel-header">
+
+            <div>
+
+                <div class="eyebrow">
+                    RECENT EVENTS
+                </div>
+
+                <h2>
+                    Interface Events
+                </h2>
+
+            </div>
+
+
+            <div class="count-badge">
+
+                Recent:
+
+                <strong id="event-count">
+                    0
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div id="events-list">
+
+            <div class="empty-state">
+                No events
+            </div>
+
+        </div>
+
+    </section>
 
 
 
@@ -148,22 +265,18 @@
          Traffic History
          ==================================================== -->
 
-    <div class="chart-card">
+    <section class="panel">
 
-
-        <div class="chart-header">
-
+        <div class="panel-header">
 
             <div>
 
-                <p class="small-title">
+                <div class="eyebrow">
                     TRAFFIC HISTORY
-                </p>
+                </div>
 
                 <h2 id="chart-interface">
-
-                    點擊下方 Interface
-
+                    Select an interface
                 </h2>
 
             </div>
@@ -197,108 +310,121 @@
 
             </div>
 
-
         </div>
-
 
 
         <div class="chart-legend">
 
-            <span class="legend-rx">
+            <span class="rx-label">
                 ● RX
             </span>
 
-            <span class="legend-tx">
+            <span class="tx-label">
                 ● TX
             </span>
 
         </div>
 
 
+        <div class="chart-wrapper">
 
-        <canvas
-            id="traffic-chart"
-        ></canvas>
+            <canvas id="traffic-chart">
+            </canvas>
 
 
-        <div
-            id="chart-message"
-            class="chart-message"
-        >
-            點擊 Interface 查看歷史流量
+            <div
+                id="chart-message"
+                class="chart-message"
+            >
+                Click an interface below to view traffic history.
+            </div>
+
         </div>
 
-
-    </div>
+    </section>
 
 
 
     <!-- ====================================================
-         Interface
+         Interfaces
          ==================================================== -->
 
-    <div class="section-header">
+    <section class="panel">
 
-        <div>
+        <div class="panel-header">
 
-            <h2>
-                Interfaces
-            </h2>
+            <div>
 
-            <p>
-                即時 Interface Status / Traffic
-            </p>
+                <div class="eyebrow">
+                    INTERFACES
+                </div>
+
+                <h2>
+                    Live Interface Status
+                </h2>
+
+            </div>
+
+
+            <div class="count-badge">
+
+                Interfaces:
+
+                <strong id="interface-count">
+                    0
+                </strong>
+
+            </div>
 
         </div>
 
-    </div>
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Interface
+                        </th>
+
+                        <th>
+                            Admin
+                        </th>
+
+                        <th>
+                            Oper
+                        </th>
+
+                        <th>
+                            State
+                        </th>
+
+                        <th>
+                            RX Mbps
+                        </th>
+
+                        <th>
+                            TX Mbps
+                        </th>
+
+                    </tr>
+
+                </thead>
 
 
+                <tbody id="interface-table">
 
-    <div class="interface-card">
+                </tbody>
 
-        <table>
+            </table>
 
-            <thead>
+        </div>
 
-                <tr>
-
-                    <th>
-                        Interface
-                    </th>
-
-                    <th>
-                        Admin
-                    </th>
-
-                    <th>
-                        Link
-                    </th>
-
-                    <th>
-                        State
-                    </th>
-
-                    <th>
-                        RX Mbps
-                    </th>
-
-                    <th>
-                        TX Mbps
-                    </th>
-
-                </tr>
-
-            </thead>
-
-
-            <tbody id="interface-table">
-
-            </tbody>
-
-        </table>
-
-    </div>
+    </section>
 
 
 </div>
@@ -309,314 +435,264 @@
 
 
 // ============================================================
-// 目前選擇的 Interface
+// Current UI State
 // ============================================================
 
 let selectedInterfaceIndex = null;
 
 let selectedInterfaceName = null;
 
-
-// 預設圖表看最近 1 小時
 let selectedRange = 3600;
 
 
 // ============================================================
-// Monitor Update
+// HTML Helper
 // ============================================================
 
-async function updateMonitor() {
+function createElement(
+    tag,
+    className = null,
+    text = null
+) {
 
-    try {
-
-        const response =
-            await fetch(
-                "/api/monitor"
-            );
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                "Monitor API failed"
-            );
-
-        }
+    const element =
+        document.createElement(
+            tag
+        );
 
 
-        const data =
-            await response.json();
+    if (className) {
+
+        element.className =
+            className;
+
+    }
 
 
-        const sw =
-            data.switch;
+    if (text !== null) {
+
+        element.textContent =
+            text;
+
+    }
 
 
-        // ----------------------------------------------------
-        // Switch 基本資料
-        // ----------------------------------------------------
+    return element;
+
+}
+
+
+// ============================================================
+// Duration
+//
+// seconds -> HH:MM:SS
+// ============================================================
+
+function formatDuration(
+    totalSeconds
+) {
+
+    totalSeconds =
+        Math.max(
+            0,
+            Math.floor(
+                totalSeconds
+            )
+        );
+
+
+    const hours =
+        Math.floor(
+            totalSeconds
+            /
+            3600
+        );
+
+
+    const minutes =
+        Math.floor(
+            (
+                totalSeconds
+                %
+                3600
+            )
+            /
+            60
+        );
+
+
+    const seconds =
+        totalSeconds
+        %
+        60;
+
+
+    return (
+        String(
+            hours
+        ).padStart(
+            2,
+            "0"
+        )
+        +
+        ":"
+        +
+        String(
+            minutes
+        ).padStart(
+            2,
+            "0"
+        )
+        +
+        ":"
+        +
+        String(
+            seconds
+        ).padStart(
+            2,
+            "0"
+        )
+    );
+
+}
+
+
+// ============================================================
+// Render Switch
+// ============================================================
+
+function renderSwitch(
+    data
+) {
+
+    const sw =
+        data.switch
+        ??
+        {};
+
+
+    document
+        .getElementById(
+            "hostname"
+        )
+        .textContent =
+            sw.hostname
+            ??
+            "Unknown";
+
+
+    document
+        .getElementById(
+            "switch-ip"
+        )
+        .textContent =
+            sw.ip
+            ??
+            "-";
+
+
+    document
+        .getElementById(
+            "switch-cpu"
+        )
+        .textContent =
+            sw.cpu
+            ??
+            "-";
+
+
+    document
+        .getElementById(
+            "switch-uptime"
+        )
+        .textContent =
+            sw.uptime
+            ??
+            "-";
+
+
+    // ========================================================
+    // Last Update
+    // ========================================================
+
+    if (data.last_update) {
 
         document
             .getElementById(
-                "hostname"
+                "last-update"
             )
             .textContent =
-                sw.hostname
-                ?? "Unknown";
-
-
-        document
-            .getElementById(
-                "ip"
-            )
-            .textContent =
-                sw.ip
-                ?? "-";
-
-
-        document
-            .getElementById(
-                "cpu"
-            )
-            .textContent =
-                sw.cpu
-                ?? "-";
-
-
-        document
-            .getElementById(
-                "uptime"
-            )
-            .textContent =
-                sw.uptime
-                ?? "-";
-
-
-        // ----------------------------------------------------
-        // Last Update
-        // ----------------------------------------------------
-
-        if (data.last_update) {
-
-            document
-                .getElementById(
-                    "last-update"
+                new Date(
+                    data.last_update
+                    *
+                    1000
                 )
-                .textContent =
-                    new Date(
-                        data.last_update
-                        * 1000
-                    )
-                    .toLocaleTimeString();
+                .toLocaleString();
 
-        }
+    }
 
 
-        // ----------------------------------------------------
-        // Switch Status
-        // ----------------------------------------------------
+    // ========================================================
+    // ONLINE / OFFLINE
+    // ========================================================
 
-        const switchStatus =
-            document
-            .getElementById(
-                "status"
-            );
+    const status =
+        document.getElementById(
+            "switch-status"
+        );
 
 
-        if (sw.online) {
+    if (sw.online) {
 
-            switchStatus.textContent =
-                "ONLINE";
+        status.textContent =
+            "ONLINE";
 
-            switchStatus.className =
-                "status-badge online-badge";
+        status.className =
+            "status-badge status-online";
 
-        }
+    }
 
-        else {
+    else {
 
-            switchStatus.textContent =
-                "OFFLINE";
+        status.textContent =
+            "OFFLINE";
 
-            switchStatus.className =
-                "status-badge offline-badge";
+        status.className =
+            "status-badge status-offline";
 
-        }
+    }
 
 
-        // ----------------------------------------------------
-        // Interface Table
-        // ----------------------------------------------------
+    // ========================================================
+    // Backend Poll Error
+    // ========================================================
 
-        const table =
-            document
-            .getElementById(
-                "interface-table"
-            );
+    const backendError =
+        document.getElementById(
+            "backend-error"
+        );
 
 
-        table.innerHTML =
-            "";
+    if (data.last_error) {
 
+        backendError.textContent =
+            "Backend poll error: "
+            +
+            data.last_error;
 
-        data.interfaces.forEach(
-            function(interface) {
-
-
-                const row =
-                    document.createElement(
-                        "tr"
-                    );
-
-
-                row.className =
-                    "clickable-row";
-
-
-                // 點擊 Port
-                row.onclick =
-                    function() {
-
-                        selectedInterfaceIndex =
-                            interface.index;
-
-
-                        selectedInterfaceName =
-                            interface.name;
-
-
-                        loadHistory();
-
-                    };
-
-
-                // Interface
-                addCell(
-                    row,
-                    interface.name
-                );
-
-
-                // Admin
-                const adminCell =
-                    addCell(
-                        row,
-                        interface.admin_status
-                    );
-
-
-                if (
-                    interface.admin_status
-                    === "UP"
-                ) {
-
-                    adminCell.className =
-                        "interface-up";
-
-                }
-
-                else {
-
-                    adminCell.className =
-                        "interface-down";
-
-                }
-
-
-                // Link
-                const linkCell =
-                    addCell(
-                        row,
-                        interface.oper_status
-                    );
-
-
-                if (
-                    interface.oper_status
-                    === "UP"
-                ) {
-
-                    linkCell.className =
-                        "interface-up";
-
-                }
-
-                else {
-
-                    linkCell.className =
-                        "interface-down";
-
-                }
-
-
-                // State
-                const stateCell =
-                    addCell(
-                        row,
-                        interface.state
-                    );
-
-
-                if (
-                    interface.state
-                    === "ONLINE"
-                ) {
-
-                    stateCell.className =
-                        "interface-up";
-
-                }
-
-                else if (
-                    interface.state
-                    === "SHUTDOWN"
-                ) {
-
-                    stateCell.className =
-                        "interface-shutdown";
-
-                }
-
-                else {
-
-                    stateCell.className =
-                        "interface-nolink";
-
-                }
-
-
-                // RX
-                addCell(
-                    row,
-                    Number(
-                        interface.rx_mbps
-                    ).toFixed(3)
-                );
-
-
-                // TX
-                addCell(
-                    row,
-                    Number(
-                        interface.tx_mbps
-                    ).toFixed(3)
-                );
-
-
-                table.appendChild(
-                    row
-                );
-
-            }
+        backendError.classList.remove(
+            "hidden"
         );
 
     }
 
-    catch (error) {
+    else {
 
-        console.error(
-            "Monitor Error:",
-            error
+        backendError.textContent =
+            "";
+
+        backendError.classList.add(
+            "hidden"
         );
 
     }
@@ -625,12 +701,412 @@ async function updateMonitor() {
 
 
 // ============================================================
-// Add Cell
+// Render Alerts
 // ============================================================
 
-function addCell(
+function renderAlerts(
+    alerts
+) {
+
+    const list =
+        document.getElementById(
+            "alerts-list"
+        );
+
+
+    const count =
+        document.getElementById(
+            "alert-count"
+        );
+
+
+    count.textContent =
+        alerts.length;
+
+
+    list.innerHTML =
+        "";
+
+
+    if (
+        alerts.length === 0
+    ) {
+
+        list.appendChild(
+            createElement(
+                "div",
+                "empty-state",
+                "No active alerts"
+            )
+        );
+
+        return;
+
+    }
+
+
+    alerts.forEach(
+        function(alert) {
+
+
+            const card =
+                createElement(
+                    "div",
+                    "alert-card"
+                );
+
+
+            if (
+                alert.severity
+                ===
+                "CRITICAL"
+            ) {
+
+                card.classList.add(
+                    "alert-critical"
+                );
+
+            }
+
+            else if (
+                alert.severity
+                ===
+                "WARNING"
+            ) {
+
+                card.classList.add(
+                    "alert-warning"
+                );
+
+            }
+
+            else {
+
+                card.classList.add(
+                    "alert-info"
+                );
+
+            }
+
+
+            // =================================================
+            // Top
+            // =================================================
+
+            const top =
+                createElement(
+                    "div",
+                    "alert-card-top"
+                );
+
+
+            const severity =
+                createElement(
+                    "span",
+                    "severity-badge",
+                    alert.severity
+                );
+
+
+            severity.classList.add(
+                "severity-"
+                +
+                alert.severity
+                    .toLowerCase()
+            );
+
+
+            const duration =
+                createElement(
+                    "span",
+                    "alert-duration",
+
+                    "Down for "
+                    +
+                    formatDuration(
+                        Date.now()
+                        /
+                        1000
+                        -
+                        alert.created_at
+                    )
+                );
+
+
+            top.appendChild(
+                severity
+            );
+
+
+            top.appendChild(
+                duration
+            );
+
+
+            // =================================================
+            // Name
+            // =================================================
+
+            const name =
+                createElement(
+                    "h3",
+                    null,
+                    alert.interface_name
+                );
+
+
+            // =================================================
+            // Description
+            // =================================================
+
+            const description =
+                createElement(
+                    "p",
+                    "alert-description",
+
+                    alert.description
+                    ??
+                    "No description"
+                );
+
+
+            // =================================================
+            // Type
+            // =================================================
+
+            const type =
+                createElement(
+                    "div",
+                    "alert-type",
+                    alert.alert_type
+                );
+
+
+            card.appendChild(
+                top
+            );
+
+
+            card.appendChild(
+                name
+            );
+
+
+            card.appendChild(
+                description
+            );
+
+
+            card.appendChild(
+                type
+            );
+
+
+            list.appendChild(
+                card
+            );
+
+        }
+    );
+
+}
+
+
+// ============================================================
+// Render Events
+// ============================================================
+
+function renderEvents(
+    events
+) {
+
+    const list =
+        document.getElementById(
+            "events-list"
+        );
+
+
+    document
+        .getElementById(
+            "event-count"
+        )
+        .textContent =
+            events.length;
+
+
+    list.innerHTML =
+        "";
+
+
+    if (
+        events.length === 0
+    ) {
+
+        list.appendChild(
+            createElement(
+                "div",
+                "empty-state",
+                "No events"
+            )
+        );
+
+        return;
+
+    }
+
+
+    events.forEach(
+        function(event) {
+
+
+            const item =
+                createElement(
+                    "div",
+                    "event-item"
+                );
+
+
+            // =================================================
+            // Indicator
+            // =================================================
+
+            const indicator =
+                createElement(
+                    "span",
+                    "event-indicator",
+                    "●"
+                );
+
+
+            if (
+                event.event_type
+                ===
+                "LINK_DOWN"
+            ) {
+
+                indicator.classList.add(
+                    "event-down"
+                );
+
+            }
+
+            else if (
+                event.event_type
+                ===
+                "LINK_UP"
+            ) {
+
+                indicator.classList.add(
+                    "event-up"
+                );
+
+            }
+
+            else {
+
+                indicator.classList.add(
+                    "event-other"
+                );
+
+            }
+
+
+            // =================================================
+            // Content
+            // =================================================
+
+            const content =
+                createElement(
+                    "div",
+                    "event-content"
+                );
+
+
+            const top =
+                createElement(
+                    "div",
+                    "event-top"
+                );
+
+
+            top.appendChild(
+                createElement(
+                    "strong",
+                    null,
+                    event.interface_name
+                )
+            );
+
+
+            top.appendChild(
+                createElement(
+                    "span",
+                    "event-type",
+                    event.event_type
+                )
+            );
+
+
+            const bottom =
+                createElement(
+                    "div",
+                    "event-bottom",
+
+                    new Date(
+                        event.timestamp
+                        *
+                        1000
+                    )
+                    .toLocaleString()
+                    +
+                    " | "
+                    +
+                    event.old_status
+                    +
+                    " → "
+                    +
+                    event.new_status
+                );
+
+
+            content.appendChild(
+                top
+            );
+
+
+            content.appendChild(
+                bottom
+            );
+
+
+            item.appendChild(
+                indicator
+            );
+
+
+            item.appendChild(
+                content
+            );
+
+
+            list.appendChild(
+                item
+            );
+
+        }
+    );
+
+}
+
+
+// ============================================================
+// Interface Cell
+// ============================================================
+
+function addTableCell(
     row,
-    value
+    value,
+    className = null
 ) {
 
     const cell =
@@ -643,17 +1119,294 @@ function addCell(
         value;
 
 
+    if (className) {
+
+        cell.className =
+            className;
+
+    }
+
+
     row.appendChild(
         cell
     );
 
 
     return cell;
+
 }
 
 
 // ============================================================
-// Change History Range
+// Render Interfaces
+// ============================================================
+
+function renderInterfaces(
+    interfaces
+) {
+
+    const table =
+        document.getElementById(
+            "interface-table"
+        );
+
+
+    document
+        .getElementById(
+            "interface-count"
+        )
+        .textContent =
+            interfaces.length;
+
+
+    table.innerHTML =
+        "";
+
+
+    interfaces.forEach(
+        function(interface) {
+
+
+            const row =
+                document.createElement(
+                    "tr"
+                );
+
+
+            row.className =
+                "interface-row";
+
+
+            if (
+                selectedInterfaceIndex
+                ===
+                interface.index
+            ) {
+
+                row.classList.add(
+                    "selected-row"
+                );
+
+            }
+
+
+            row.addEventListener(
+                "click",
+                function() {
+
+                    selectedInterfaceIndex =
+                        interface.index;
+
+
+                    selectedInterfaceName =
+                        interface.name;
+
+
+                    loadHistory();
+
+                }
+            );
+
+
+            addTableCell(
+                row,
+                interface.name
+            );
+
+
+            addTableCell(
+                row,
+
+                interface.admin_status,
+
+                interface.admin_status
+                ===
+                "UP"
+                ?
+                "text-up"
+                :
+                "text-down"
+            );
+
+
+            addTableCell(
+                row,
+
+                interface.oper_status,
+
+                interface.oper_status
+                ===
+                "UP"
+                ?
+                "text-up"
+                :
+                "text-down"
+            );
+
+
+            let stateClass =
+                "text-warning";
+
+
+            if (
+                interface.state
+                ===
+                "ONLINE"
+            ) {
+
+                stateClass =
+                    "text-up";
+
+            }
+
+            else if (
+                interface.state
+                ===
+                "SHUTDOWN"
+            ) {
+
+                stateClass =
+                    "text-muted";
+
+            }
+
+
+            addTableCell(
+                row,
+                interface.state,
+                stateClass
+            );
+
+
+            addTableCell(
+                row,
+
+                Number(
+                    interface.rx_mbps
+                    ??
+                    0
+                )
+                .toFixed(
+                    3
+                )
+            );
+
+
+            addTableCell(
+                row,
+
+                Number(
+                    interface.tx_mbps
+                    ??
+                    0
+                )
+                .toFixed(
+                    3
+                )
+            );
+
+
+            table.appendChild(
+                row
+            );
+
+        }
+    );
+
+}
+
+
+// ============================================================
+// Update Monitor
+// ============================================================
+
+async function updateMonitor() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/monitor",
+                {
+                    cache:
+                        "no-store"
+                }
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "HTTP "
+                +
+                response.status
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        renderSwitch(
+            data
+        );
+
+
+        renderAlerts(
+            data.alerts
+            ??
+            []
+        );
+
+
+        renderEvents(
+            data.events
+            ??
+            []
+        );
+
+
+        renderInterfaces(
+            data.interfaces
+            ??
+            []
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Monitor API Error:",
+            error
+        );
+
+
+        const backendError =
+            document.getElementById(
+                "backend-error"
+            );
+
+
+        backendError.textContent =
+            "Frontend API error: "
+            +
+            error.message;
+
+
+        backendError.classList.remove(
+            "hidden"
+        );
+
+    }
+
+}
+
+
+// ============================================================
+// History Range
 // ============================================================
 
 function changeRange(
@@ -666,7 +1419,8 @@ function changeRange(
 
     if (
         selectedInterfaceIndex
-        !== null
+        !==
+        null
     ) {
 
         loadHistory();
@@ -684,7 +1438,8 @@ async function loadHistory() {
 
     if (
         selectedInterfaceIndex
-        === null
+        ===
+        null
     ) {
 
         return;
@@ -692,15 +1447,15 @@ async function loadHistory() {
     }
 
 
+    document
+        .getElementById(
+            "chart-interface"
+        )
+        .textContent =
+            selectedInterfaceName;
+
+
     try {
-
-        document
-            .getElementById(
-                "chart-interface"
-            )
-            .textContent =
-                selectedInterfaceName;
-
 
         const response =
             await fetch(
@@ -710,8 +1465,24 @@ async function loadHistory() {
                 +
                 "?seconds="
                 +
-                selectedRange
+                selectedRange,
+
+                {
+                    cache:
+                        "no-store"
+                }
             );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "History HTTP "
+                +
+                response.status
+            );
+
+        }
 
 
         const data =
@@ -720,6 +1491,8 @@ async function loadHistory() {
 
         drawTrafficChart(
             data.history
+            ??
+            []
         );
 
     }
@@ -731,13 +1504,23 @@ async function loadHistory() {
             error
         );
 
+
+        document
+            .getElementById(
+                "chart-message"
+            )
+            .textContent =
+                "History API error: "
+                +
+                error.message;
+
     }
 
 }
 
 
 // ============================================================
-// Draw Traffic Chart
+// Traffic Chart
 // ============================================================
 
 function drawTrafficChart(
@@ -750,63 +1533,8 @@ function drawTrafficChart(
         );
 
 
-    const container =
+    const wrapper =
         canvas.parentElement;
-
-
-    // Retina / 高解析度畫布
-    const pixelRatio =
-        window.devicePixelRatio
-        || 1;
-
-
-    const width =
-        container.clientWidth
-        - 40;
-
-
-    const height =
-        320;
-
-
-    canvas.width =
-        width
-        * pixelRatio;
-
-
-    canvas.height =
-        height
-        * pixelRatio;
-
-
-    canvas.style.width =
-        width
-        + "px";
-
-
-    canvas.style.height =
-        height
-        + "px";
-
-
-    const ctx =
-        canvas.getContext(
-            "2d"
-        );
-
-
-    ctx.scale(
-        pixelRatio,
-        pixelRatio
-    );
-
-
-    ctx.clearRect(
-        0,
-        0,
-        width,
-        height
-    );
 
 
     const message =
@@ -817,7 +1545,8 @@ function drawTrafficChart(
 
     if (
         history.length
-        < 2
+        <
+        2
     ) {
 
         message.style.display =
@@ -825,7 +1554,21 @@ function drawTrafficChart(
 
 
         message.textContent =
-            "目前歷史資料不足，稍等一下再看看。";
+            "Not enough history data yet.";
+
+
+        const ctx =
+            canvas.getContext(
+                "2d"
+            );
+
+
+        ctx.clearRect(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
 
 
         return;
@@ -837,125 +1580,186 @@ function drawTrafficChart(
         "none";
 
 
-    // --------------------------------------------------------
-    // Chart 尺寸
-    // --------------------------------------------------------
-
-    const paddingLeft =
-        60;
+    const ratio =
+        window.devicePixelRatio
+        ||
+        1;
 
 
-    const paddingRight =
+    const width =
+        Math.max(
+            300,
+            wrapper.clientWidth
+        );
+
+
+    const height =
+        320;
+
+
+    canvas.width =
+        width
+        *
+        ratio;
+
+
+    canvas.height =
+        height
+        *
+        ratio;
+
+
+    canvas.style.width =
+        width
+        +
+        "px";
+
+
+    canvas.style.height =
+        height
+        +
+        "px";
+
+
+    const ctx =
+        canvas.getContext(
+            "2d"
+        );
+
+
+    ctx.setTransform(
+        ratio,
+        0,
+        0,
+        ratio,
+        0,
+        0
+    );
+
+
+    ctx.clearRect(
+        0,
+        0,
+        width,
+        height
+    );
+
+
+    const left =
+        62;
+
+
+    const right =
         20;
 
 
-    const paddingTop =
-        25;
+    const top =
+        20;
 
 
-    const paddingBottom =
+    const bottom =
         45;
 
 
     const chartWidth =
         width
         -
-        paddingLeft
+        left
         -
-        paddingRight;
+        right;
 
 
     const chartHeight =
         height
         -
-        paddingTop
+        top
         -
-        paddingBottom;
+        bottom;
 
 
-    // --------------------------------------------------------
-    // 最大 Mbps
-    // --------------------------------------------------------
-
-    let maxValue =
+    let maxMbps =
         0;
 
 
     history.forEach(
         function(point) {
 
-            maxValue =
+            maxMbps =
                 Math.max(
-                    maxValue,
-                    point.rx_mbps,
-                    point.tx_mbps
+                    maxMbps,
+
+                    Number(
+                        point.rx_mbps
+                        ??
+                        0
+                    ),
+
+                    Number(
+                        point.tx_mbps
+                        ??
+                        0
+                    )
                 );
 
         }
     );
 
 
-    // 最低 Y Scale = 1 Mbps
-    if (maxValue < 1) {
-
-        maxValue = 1;
-
-    }
-
-
-    // 留 10% 上方空間
-    maxValue =
-        maxValue
-        * 1.1;
+    // 圖至少顯示到 1 Mbps
+    maxMbps =
+        Math.max(
+            1,
+            maxMbps
+            *
+            1.10
+        );
 
 
-    // --------------------------------------------------------
-    // 背景 Grid
-    // --------------------------------------------------------
+    // ========================================================
+    // Grid
+    // ========================================================
 
     ctx.strokeStyle =
         "#334155";
-
-
-    ctx.lineWidth =
-        1;
 
 
     ctx.fillStyle =
         "#94a3b8";
 
 
+    ctx.lineWidth =
+        1;
+
+
     ctx.font =
-        "12px Arial";
+        "12px sans-serif";
 
 
-    const gridLines =
+    const gridCount =
         5;
 
 
     for (
         let i = 0;
-        i <= gridLines;
+        i <= gridCount;
         i++
     ) {
 
         const y =
-            paddingTop
+            top
             +
-            (
-                chartHeight
-                /
-                gridLines
-            )
+            chartHeight
             *
-            i;
+            i
+            /
+            gridCount;
 
 
         ctx.beginPath();
 
 
         ctx.moveTo(
-            paddingLeft,
+            left,
             y
         );
 
@@ -963,7 +1767,7 @@ function drawTrafficChart(
         ctx.lineTo(
             width
             -
-            paddingRight,
+            right,
             y
         );
 
@@ -972,55 +1776,60 @@ function drawTrafficChart(
 
 
         const value =
-            maxValue
+            maxMbps
             -
-            (
-                maxValue
-                /
-                gridLines
-            )
+            maxMbps
             *
-            i;
+            i
+            /
+            gridCount;
 
 
         ctx.fillText(
-            value.toFixed(2)
-            + " Mbps",
+            value.toFixed(
+                2
+            )
+            +
+            " Mbps",
 
-            5,
+            4,
 
-            y + 4
+            y
+            +
+            4
         );
 
     }
 
 
-    // --------------------------------------------------------
-    // X Axis 時間
-    // --------------------------------------------------------
+    // ========================================================
+    // X-axis labels
+    // ========================================================
 
-    const timeLabels =
+    const labelCount =
         5;
 
 
     for (
         let i = 0;
-        i < timeLabels;
+        i < labelCount;
         i++
     ) {
 
         const historyIndex =
-            Math.floor(
+            Math.round(
                 (
                     history.length
-                    - 1
+                    -
+                    1
                 )
                 *
                 i
                 /
                 (
-                    timeLabels
-                    - 1
+                    labelCount
+                    -
+                    1
                 )
             );
 
@@ -1032,24 +1841,24 @@ function drawTrafficChart(
 
 
         const x =
-            paddingLeft
+            left
             +
+            chartWidth
+            *
+            i
+            /
             (
-                chartWidth
-                *
-                i
-                /
-                (
-                    timeLabels
-                    - 1
-                )
+                labelCount
+                -
+                1
             );
 
 
-        const time =
+        const label =
             new Date(
                 point.timestamp
-                * 1000
+                *
+                1000
             )
             .toLocaleTimeString(
                 [],
@@ -1064,82 +1873,64 @@ function drawTrafficChart(
 
 
         ctx.fillText(
-            time,
-
+            label,
             x - 18,
-
             height - 15
         );
 
     }
 
 
-    // --------------------------------------------------------
+    // ========================================================
     // RX
-    // --------------------------------------------------------
+    // ========================================================
 
     drawLine(
         ctx,
-
         history,
-
         "rx_mbps",
-
-        maxValue,
-
+        "#22c55e",
+        maxMbps,
+        left,
+        top,
         chartWidth,
-
-        chartHeight,
-
-        paddingLeft,
-
-        paddingTop,
-
-        "#22c55e"
+        chartHeight
     );
 
 
-    // --------------------------------------------------------
+    // ========================================================
     // TX
-    // --------------------------------------------------------
+    // ========================================================
 
     drawLine(
         ctx,
-
         history,
-
         "tx_mbps",
-
-        maxValue,
-
+        "#38bdf8",
+        maxMbps,
+        left,
+        top,
         chartWidth,
-
-        chartHeight,
-
-        paddingLeft,
-
-        paddingTop,
-
-        "#38bdf8"
+        chartHeight
     );
 
 }
 
 
 // ============================================================
-// Draw Line
+// Draw Chart Line
 // ============================================================
 
 function drawLine(
     ctx,
     history,
     key,
-    maxValue,
+    color,
+    maxMbps,
+    left,
+    top,
     chartWidth,
-    chartHeight,
-    paddingLeft,
-    paddingTop,
-    color
+    chartHeight
 ) {
 
     ctx.beginPath();
@@ -1160,35 +1951,48 @@ function drawLine(
         ) {
 
             const x =
-                paddingLeft
+                left
                 +
                 (
                     index
                     /
                     (
                         history.length
-                        - 1
+                        -
+                        1
                     )
                 )
                 *
                 chartWidth;
 
 
+            const value =
+                Number(
+                    point[
+                        key
+                    ]
+                    ??
+                    0
+                );
+
+
             const y =
-                paddingTop
+                top
                 +
                 chartHeight
                 -
                 (
-                    point[key]
+                    value
                     /
-                    maxValue
+                    maxMbps
                 )
                 *
                 chartHeight;
 
 
-            if (index === 0) {
+            if (
+                index === 0
+            ) {
 
                 ctx.moveTo(
                     x,
@@ -1219,24 +2023,25 @@ function drawLine(
 // Start
 // ============================================================
 
+// 頁面開啟立刻抓一次
 updateMonitor();
 
 
-// Monitor 每 5 秒刷新
+// Monitor 每 5 秒更新
 setInterval(
     updateMonitor,
     5000
 );
 
 
-// 如果已經選 Port
-// 每 30 秒更新歷史圖
+// History 每 30 秒更新
 setInterval(
     function() {
 
         if (
             selectedInterfaceIndex
-            !== null
+            !==
+            null
         ) {
 
             loadHistory();
@@ -1244,8 +2049,26 @@ setInterval(
         }
 
     },
-
     30000
+);
+
+
+// 瀏覽器 resize 時重新畫 Chart
+window.addEventListener(
+    "resize",
+    function() {
+
+        if (
+            selectedInterfaceIndex
+            !==
+            null
+        ) {
+
+            loadHistory();
+
+        }
+
+    }
 );
 
 
