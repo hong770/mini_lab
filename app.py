@@ -24,6 +24,10 @@ from snmp import (
     get_interface_snapshot
 )
 
+from notification_runtime import (
+    process_notification_snapshot,
+    get_notification_runtime_status
+)
 
 from database import (
     init_db,
@@ -687,7 +691,63 @@ async def poll_switch():
             current_time = (
                 time.time()
             )
+            # =================================================
+            # Notification Engine Runtime
+            #
+            # 旁掛式處理。
+            #
+            # 不修改 Alert v2。
+            # 不修改 monitor_state。
+            # 不修改 database alert。
+            #
+            # Runtime 自己比較上一輪/current interface，
+            # 只有真正狀態 transition 才產生事件。
+            # =================================================
 
+            notification_decisions = (
+                process_notification_snapshot(
+
+                    basic_info=basic_info,
+
+                    current_interfaces=(
+                        current_interfaces
+                    ),
+
+                    current_time=(
+                        current_time
+                    )
+                )
+            )
+
+
+            # =================================================
+            # Debug Output
+            #
+            # 現階段先印出來觀察。
+            #
+            # 下一階段：
+            #
+            # action == SEND
+            #
+            # 才會交給 Telegram / Email Dispatcher。
+            # =================================================
+
+            for decision in (
+                notification_decisions
+            ):
+
+                print(
+
+                    "[Notification]",
+
+                    decision.action,
+
+                    decision.notification_type,
+
+                    decision.entity_key,
+
+                    decision.reason
+                )
 
             # =================================================
             # First Poll Alert Reconciliation
@@ -1257,4 +1317,25 @@ def api_database():
 
     return (
         get_database_status()
+    )
+
+# ============================================================
+# Notification Engine API
+#
+# Debug / Runtime Status
+#
+# GET:
+#
+# /api/notification-engine
+#
+# 目前只讀取狀態，不修改任何東西。
+# ============================================================
+
+@app.get(
+    "/api/notification-engine"
+)
+def api_notification_engine():
+
+    return (
+        get_notification_runtime_status()
     )
