@@ -1,2 +1,2 @@
 # mini_lab
-python,engine,switch,tailscale,git
+engine get switch snmp
