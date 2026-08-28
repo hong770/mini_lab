@@ -1,2 +1,2 @@
 # mini_lab
-gcpvm,python
+python,engine,switch,tailscale,git
