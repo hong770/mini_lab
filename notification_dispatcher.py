@@ -3,28 +3,25 @@ import smtplib
 import ssl
 
 from email.message import EmailMessage
+from dotenv import load_dotenv
 
 
 # ============================================================
-# SMTP Configuration
+# Load Environment Variables
 #
-# 不要把密碼寫死在 Python。
+# 從目前專案的 .env 載入設定。
 #
-# 從 Linux environment variable 讀取。
-#
-# 需要：
-#
-# SMTP_HOST
-# SMTP_PORT
-# SMTP_USERNAME
-# SMTP_PASSWORD
-# SMTP_FROM
-# SMTP_TO
-#
-# 例如 Gmail：
-#
-# SMTP_HOST=smtp.gmail.com
-# SMTP_PORT=587
+# load_dotenv()
+#       ↓
+# 讀取 .env
+#       ↓
+# 將 SMTP_HOST、SMTP_USERNAME...
+# 放入目前 Python process 的 environment
+#       ↓
+# 後面的 os.getenv() 才讀得到
+# ============================================================
+
+load_dotenv()
 # ============================================================
 
 
